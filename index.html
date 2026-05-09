@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAMS – Garden and Mowing Services</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Barlow', sans-serif; background: #0d0d0d; color: #f2f2f0; overflow-x: hidden; }
+  :root {
+    --green: #6fd614;
+    --green-dark: #4fa300;
+    --green-glow: rgba(111,214,20,0.15);
+    --black: #0d0d0d;
+    --black2: #141414;
+    --black3: #1a1a1a;
+    --white: #f2f2f0;
+    --gray: #888;
+  }
+  ::selection { background: var(--green); color: #000; }
+
+  /* Hero animations */
+  @keyframes kenBurns1 {
+    0%   { transform: scale(1.08) translate(0%, 0%); }
+    100% { transform: scale(1.18) translate(-2%, -1%); }
+  }
+  @keyframes kenBurns2 {
+    0%   { transform: scale(1.12) translate(-2%, -1%); }
+    100% { transform: scale(1.20) translate(1%, 1%); }
+  }
+  @keyframes kenBurns3 {
+    0%   { transform: scale(1.10) translate(1%, 1%); }
+    100% { transform: scale(1.18) translate(-1%, 0%); }
+  }
+  @keyframes fadeSlide {
+    0%   { opacity: 0; }
+    8%   { opacity: 1; }
+    33%  { opacity: 1; }
+    41%  { opacity: 0; }
+    100% { opacity: 0; }
+  }
+  @keyframes mowStripe {
+    0%   { width: 0%; opacity: 0; }
+    10%  { opacity: 0.12; }
+    60%  { width: 100%; opacity: 0.12; }
+    100% { width: 100%; opacity: 0; }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse-green {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(111,214,20,0.3); }
+    50%       { box-shadow: 0 0 0 8px rgba(111,214,20,0); }
+  }
+
+  .hero-slide { position: absolute; inset: 0; overflow: hidden; }
+  .hero-slide img {
+    width: 100%; height: 100%; object-fit: cover;
+    transform-origin: center center;
+    filter: brightness(0.28);
+  }
+  .hero-slide:nth-child(1) { animation: fadeSlide 18s infinite 0s; }
+  .hero-slide:nth-child(1) img { animation: kenBurns1 18s ease-in-out infinite; }
+  .hero-slide:nth-child(2) { animation: fadeSlide 18s infinite 6s; }
+  .hero-slide:nth-child(2) img { animation: kenBurns2 18s ease-in-out infinite; }
+  .hero-slide:nth-child(3) { animation: fadeSlide 18s infinite 12s; }
+  .hero-slide:nth-child(3) img { animation: kenBurns3 18s ease-in-out infinite; }
+
+  .mow-stripe {
+    position: absolute; left: 0; height: 48px; background: rgba(111,214,20,0.07);
+    animation: mowStripe 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .fade-up { animation: fadeUp 0.7s ease forwards; }
+  .fade-up-1 { animation: fadeUp 0.7s 0.2s ease both; }
+  .fade-up-2 { animation: fadeUp 0.7s 0.4s ease both; }
+  .fade-up-3 { animation: fadeUp 0.7s 0.6s ease both; }
+  .fade-up-4 { animation: fadeUp 0.7s 0.8s ease both; }
+  
+  /* Tweaks panel */
+  #tweaks-panel {
+    display: none;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 20px;
+    z-index: 10000;
+    width: 260px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  }
+  #tweaks-panel.visible { display: block; }
+  #tweaks-panel h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; letter-spacing: 1px; text-transform: uppercase; color: var(--green); margin-bottom: 14px; }
+  .tweak-row { margin-bottom: 12px; }
+  .tweak-row label { font-size: 12px; color: #888; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .tweak-row input[type=color] { width: 100%; height: 32px; border: none; border-radius: 4px; cursor: pointer; background: none; }
+  .tweak-row select { width: 100%; background: #222; border: 1px solid #333; color: #f2f2f0; padding: 6px 8px; border-radius: 6px; font-family: 'Barlow', sans-serif; font-size: 13px; }
+  .tweak-row input[type=range] { width: 100%; accent-color: var(--green); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<div id="tweaks-panel">
+  <h4>Tweaks</h4>
+  <div class="tweak-row">
+    <label>Accent Color</label>
+    <input type="color" id="tw-accent" value="#6fd614" oninput="applyTweak('accent', this.value)">
+  </div>
+  <div class="tweak-row">
+    <label>Header Style</label>
+    <select id="tw-hero" onchange="applyTweak('hero', this.value)">
+      <option value="dark">Dark Hero</option>
+      <option value="split">Split Layout</option>
+      <option value="minimal">Minimal</option>
+    </select>
+  </div>
+  <div class="tweak-row">
+    <label>Border Radius</label>
+    <input type="range" id="tw-radius" min="0" max="20" value="8" oninput="applyTweak('radius', this.value)">
+  </div>
+</div>
+
+<script>
+  window.__tweaks = { accent: '#6fd614', hero: 'dark', radius: 8 };
+  function applyTweak(key, val) {
+    window.__tweaks[key] = val;
+    if (key === 'accent') {
+      document.documentElement.style.setProperty('--green', val);
+    }
+    if (key === 'radius') {
+      document.documentElement.style.setProperty('--radius', val + 'px');
+    }
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { [key]: val } }, '*');
+    if (window.__tweakRefresh) window.__tweakRefresh();
+  }
+  window.addEventListener('message', e => {
+    if (e.data?.type === '__activate_edit_mode') document.getElementById('tweaks-panel').classList.add('visible');
+    if (e.data?.type === '__deactivate_edit_mode') document.getElementById('tweaks-panel').classList.remove('visible');
+  });
+  window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+
+  /* === Image fallback: if a photo file is missing, swap in a branded SVG placeholder so nothing looks broken === */
+  (function(){
+    // Dark green lawn-texture SVG placeholder — inline, no network needed
+    const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">' +
+      '<defs>' +
+        '<linearGradient id="g" x1="0" y1="0" x2="0" y2="1">' +
+          '<stop offset="0%" stop-color="#1a2f10"/>' +
+          '<stop offset="55%" stop-color="#2a4818"/>' +
+          '<stop offset="100%" stop-color="#0f1f08"/>' +
+        '</linearGradient>' +
+        '<pattern id="p" x="0" y="0" width="80" height="40" patternUnits="userSpaceOnUse">' +
+          '<rect width="80" height="40" fill="url(#g)"/>' +
+          '<path d="M0 20 Q20 10 40 20 T80 20" stroke="#3a6520" stroke-width="0.8" fill="none" opacity="0.4"/>' +
+          '<path d="M0 30 Q20 22 40 30 T80 30" stroke="#4f8a28" stroke-width="0.6" fill="none" opacity="0.35"/>' +
+        '</pattern>' +
+      '</defs>' +
+      '<rect width="1200" height="800" fill="url(#p)"/>' +
+      '<rect width="1200" height="800" fill="url(#g)" opacity="0.5"/>' +
+      '<g opacity="0.08" fill="#6fd614">' +
+        '<rect x="0" y="120" width="1200" height="40"/>' +
+        '<rect x="0" y="280" width="1200" height="40"/>' +
+        '<rect x="0" y="440" width="1200" height="40"/>' +
+        '<rect x="0" y="600" width="1200" height="40"/>' +
+      '</g>' +
+      '<text x="600" y="420" font-family="sans-serif" font-size="32" font-weight="800" fill="#6fd614" text-anchor="middle" opacity="0.18" letter-spacing="8">GAMS</text>' +
+      '</svg>'
+    );
+    document.addEventListener('error', function(e){
+      const t = e.target;
+      if (t && t.tagName === 'IMG' && t.src !== PLACEHOLDER && !t.dataset.fallback) {
+        t.dataset.fallback = '1';
+        t.src = PLACEHOLDER;
+      }
+    }, true);
+    // Also apply CSS fallback colour behind CSS background-image elements (harmless if images load)
+    const style = document.createElement('style');
+    style.textContent = 'img{background:#1a2f10}';
+    document.head.appendChild(style);
+  })();
+</script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+const GREEN = '#6fd614';
+const PHOTOS = {
+  edgedPath: 'PHOTO%201.JPG',
+  mowedFront: 'PHOTO%202.JPG',
+  hedge: 'PHOTO%203.JPG',
+  backyard: 'PHOTO%204.JPG',
+};
+
+const services = [
+  {
+    id: 'residential', icon: '🏡', title: 'Residential Lawns',
+    desc: 'Pristine lawn mowing for homes of all sizes. Regular or one-off, we leave your yard looking immaculate every time.',
+    detail: 'Whether it\'s a small suburban block or a sprawling residential property, we tailor our mowing to suit your lawn type and growth rate. We use professional-grade equipment to ensure a clean, even cut every visit — no scalping, no missed strips.',
+    includes: ['Front & back lawn mowing', 'Catcher or mulch options', 'Lawn blowing & tidy-up', 'Fortnightly or monthly schedules'],
+    photo: 'PHOTO%205.JPG',
+  },
+  {
+    id: 'acreage', icon: '🌾', title: 'Acreage Lawns',
+    desc: 'Large blocks and rural properties handled with the right equipment. Efficient, thorough and competitively priced.',
+    detail: 'Acreage mowing requires the right machinery and the experience to handle uneven terrain, fence lines, and obstacles. We come equipped for large blocks — finishing the job efficiently without cutting corners on quality.',
+    includes: ['Blocks from 1 to 10+ acres', 'Rough & paddock mowing', 'Fence-line clearing', 'Flexible scheduling'],
+    photo: 'PHOTO%201.JPG',
+  },
+  {
+    id: 'whipper', icon: '🌿', title: 'Whipper Snippering',
+    desc: 'Clean edges and tight spots that mowers can\'t reach. The finishing touch that makes all the difference.',
+    detail: 'A mowed lawn only looks its best when the edges are sharp. Our whipper snippering service tackles garden beds, fence lines, driveways, paths, and any obstacle a mower can\'t get to — leaving crisp, defined borders throughout.',
+    includes: ['Fence & garden bed edging', 'Path & driveway borders', 'Around trees & posts', 'Always included with mowing'],
+    photo: 'PHOTO%202.JPG',
+  },
+  {
+    id: 'spraying', icon: '💧', title: 'Spraying',
+    desc: 'Targeted weed and pest control to keep your lawn healthy and looking its best through every season.',
+    detail: 'Weeds compete with your lawn for nutrients, water and light. Our targeted spraying service eliminates broadleaf weeds, bindii, nutgrass and other common invaders — without harming your turf. We use quality products suited to Queensland lawns.',
+    includes: ['Broadleaf weed control', 'Bindii & nutgrass treatment', 'Pathway & driveway spraying', 'Pre & post-emergent options'],
+    photo: 'PHOTO%203.JPG',
+  },
+  {
+    id: 'hedging', icon: '✂️', title: 'Hedging',
+    desc: 'Sharp, precise hedge trimming and shaping. We take pride in clean lines and tidy borders.',
+    detail: 'Overgrown hedges can take over a yard fast. We provide precise trimming and shaping for all hedge types — from low garden borders to tall privacy screens. The result is always clean, level lines that enhance your property\'s street appeal.',
+    includes: ['All hedge types & heights', 'Formal shaping & levelling', 'Debris removal & cleanup', 'One-off or regular visits'],
+    photo: 'PHOTO%204.JPG',
+  },
+  {
+    id: 'cleaning', icon: '🧹', title: 'Clean Ups',
+    desc: 'Full garden clean-ups — leaf blowing, debris removal, and yard clearing for a fresh start or seasonal tidy.',
+    detail: 'Sometimes a yard needs more than just a mow. Our garden clean-up service is perfect for overgrown properties, end-of-lease cleans, seasonal tidies, or just getting on top of things. We\'ll clear it out, tidy it up and leave it looking great.',
+    includes: ['Leaf blowing & collection', 'Debris & branch removal', 'Overgrown area clearing', 'End-of-lease & pre-sale tidies'],
+    photo: 'PHOTO%205.JPG',
+  },
+];
+
+const quoteSteps = [
+  { id: 'services', title: 'What do you need?' },
+  { id: 'property', title: 'Tell us about your property' },
+  { id: 'contact', title: 'Your contact details' },
+  { id: 'done', title: 'Request sent!' },
+];
+
+function Nav({ onQuote }) {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  useEffect(() => {
+    const handler = () => setScrolled(window.scrollY > 60);
+    window.addEventListener('scroll', handler);
+    return () => window.removeEventListener('scroll', handler);
+  }, []);
+  const navStyle = {
+    position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
+    padding: '0 40px',
+    height: scrolled ? '64px' : '80px',
+    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+    background: scrolled ? 'rgba(13,13,13,0.97)' : 'transparent',
+    backdropFilter: scrolled ? 'blur(12px)' : 'none',
+    borderBottom: scrolled ? '1px solid rgba(111,214,20,0.12)' : 'none',
+    transition: 'all 0.3s ease',
+  };
+  const logoStyle = { fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: '28px', letterSpacing: '2px', color: '#f2f2f0', textDecoration: 'none' };
+  const dotStyle = { color: '#6fd614' };
+  const linkStyle = { color: '#ccc', textDecoration: 'none', fontSize: '14px', fontWeight: 500, letterSpacing: '0.5px', transition: 'color 0.2s', textTransform: 'uppercase' };
+  return (
+    <nav style={navStyle}>
+      <a href="#home" style={{...logoStyle, display:'flex', alignItems:'center'}}><img src="GAMS%20LOGO%20WHITE.png" alt="GAMS - Garden and Mowing Services" style={{height:'48px',display:'block'}}/></a>
+      <div style={{ display: 'flex', gap: '36px', alignItems: 'center' }}>
+        {['Services','Gallery','About'].map(l => (
+          <a key={l} href={`#${l.toLowerCase()}`} style={linkStyle}
+            onMouseEnter={e => e.target.style.color='#6fd614'}
+            onMouseLeave={e => e.target.style.color='#ccc'}
+          >{l}</a>
+        ))}
+        <button onClick={onQuote} style={{
+          background: '#6fd614', color: '#0d0d0d', border: 'none',
+          padding: '10px 24px', borderRadius: '6px', fontFamily: "'Barlow Condensed', sans-serif",
+          fontWeight: 700, fontSize: '15px', letterSpacing: '1px', textTransform: 'uppercase',
+          cursor: 'pointer', transition: 'all 0.2s',
+        }}
+          onMouseEnter={e => { e.target.style.background='#7fff1a'; e.target.style.transform='translateY(-1px)'; }}
+          onMouseLeave={e => { e.target.style.background='#6fd614'; e.target.style.transform='translateY(0)'; }}
+        >Get a Quote</button>
+      </div>
+    </nav>
+  );
+}
+
+function Hero({ onQuote }) {
+  const slides = [PHOTOS.mowedFront, PHOTOS.backyard, PHOTOS.edgedPath];
+  const stripeOffsets = [15, 30, 45, 60, 75];
+
+  return (
+    <section id="home" style={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+      {/* Animated slideshow */}
+      {slides.map((src, i) => (
+        <div key={i} className="hero-slide">
+          <img src={src} alt="" />
+        </div>
+      ))}
+
+      {/* Mow stripe decorations */}
+      {stripeOffsets.map((top, i) => (
+        <div key={i} className="mow-stripe" style={{ top: `${top}%`, animationDelay: `${i * 0.7}s`, animationDuration: `${3.5 + i * 0.4}s` }} />
+      ))}
+
+      {/* Gradient overlay */}
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(105deg, rgba(13,13,13,0.95) 0%, rgba(13,13,13,0.6) 55%, rgba(111,214,20,0.04) 100%)', zIndex: 1 }} />
+
+      {/* Green accent line */}
+      <div style={{ position: 'absolute', left: 0, top: '20%', bottom: '20%', width: '4px', background: '#6fd614', borderRadius: '0 2px 2px 0', zIndex: 2 }} />
+
+      <div style={{ position: 'relative', zIndex: 2, padding: '120px 80px 80px', maxWidth: '900px' }}>
+        <div className="fade-up-1" style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+          <div style={{ width: '40px', height: '2px', background: '#6fd614' }} />
+          <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '14px', letterSpacing: '3px', color: '#6fd614', textTransform: 'uppercase' }}>Sunshine Coast · Garden & Mowing Services</span>
+        </div>
+        <h1 className="fade-up-2" style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: 'clamp(64px, 10vw, 120px)', lineHeight: 0.9, letterSpacing: '-1px', marginBottom: '28px', textTransform: 'uppercase' }}>
+          Your Lawn.<br />
+          <span style={{ color: '#6fd614' }}>Handled.</span>
+        </h1>
+        <p className="fade-up-3" style={{ fontSize: '18px', fontWeight: 300, color: '#bbb', maxWidth: '520px', lineHeight: 1.7, marginBottom: '48px' }}>
+          Professional mowing, hedging, spraying and garden clean-ups for residential and acreage properties across the Sunshine Coast.
+        </p>
+        <div className="fade-up-4" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
+          <button onClick={onQuote} style={{
+            background: '#6fd614', color: '#0d0d0d', border: 'none',
+            padding: '18px 44px', borderRadius: '6px', fontFamily: "'Barlow Condensed', sans-serif",
+            fontWeight: 800, fontSize: '18px', letterSpacing: '1.5px', textTransform: 'uppercase',
+            cursor: 'pointer', transition: 'all 0.2s', animation: 'pulse-green 2.5s ease 2s 3',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background='#7fff1a'; e.currentTarget.style.transform='translateY(-2px)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background='#6fd614'; e.currentTarget.style.transform='translateY(0)'; }}
+          >Get a Free Quote</button>
+          <a href="tel:0422633941" style={{
+            color: '#f2f2f0', textDecoration: 'none', fontFamily: "'Barlow Condensed', sans-serif",
+            fontWeight: 700, fontSize: '20px', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '10px',
+          }}>
+            <span style={{ fontSize: '20px', color: '#6fd614' }}>📞</span>
+            0422 633 941
+          </a>
+        </div>
+
+        {/* Scroll indicator */}
+        <div style={{ position: 'absolute', bottom: '-60px', left: '80px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', opacity: 0.35 }}>
+          <div style={{ width: '1px', height: '40px', background: '#6fd614' }} />
+          <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '11px', letterSpacing: '2px', color: '#6fd614', textTransform: 'uppercase' }}>Scroll</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ServiceCard({ s, onQuote }) {
+  const [expanded, setExpanded] = useState(false);
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: expanded ? '#1c1c1c' : hovered ? '#1a1a1a' : '#141414',
+        borderLeft: expanded ? '3px solid #6fd614' : hovered ? '3px solid rgba(111,214,20,0.5)' : '3px solid transparent',
+        transition: 'all 0.25s ease',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Card header — always visible */}
+      <div
+        onClick={() => setExpanded(e => !e)}
+        style={{ padding: '36px', cursor: 'pointer', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}
+      >
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: '28px', marginBottom: '14px' }}>{s.icon}</div>
+          <h3 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '24px', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '10px', color: expanded ? '#6fd614' : hovered ? '#6fd614' : '#f2f2f0', transition: 'color 0.25s' }}>{s.title}</h3>
+          <p style={{ fontSize: '14px', color: '#777', lineHeight: 1.7 }}>{s.desc}</p>
+        </div>
+        <div style={{ flexShrink: 0, marginTop: '4px', width: '28px', height: '28px', border: `1px solid ${expanded ? '#6fd614' : '#2a2a2a'}`, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.25s', color: expanded ? '#6fd614' : '#555', fontSize: '14px', transform: expanded ? 'rotate(45deg)' : 'rotate(0deg)' }}>+</div>
+      </div>
+
+      {/* Expanded content */}
+      {expanded && (
+        <div style={{ padding: '0 36px 36px', borderTop: '1px solid #222' }}>
+          {/* Photo */}
+          <div style={{ height: '200px', overflow: 'hidden', borderRadius: '6px', margin: '24px 0 20px' }}>
+            <img src={s.photo} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
+          </div>
+
+          {/* Detail text */}
+          <p style={{ fontSize: '14px', color: '#888', lineHeight: 1.8, marginBottom: '20px' }}>{s.detail}</p>
+
+          {/* What's included */}
+          <div style={{ marginBottom: '24px' }}>
+            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '11px', letterSpacing: '2px', color: '#6fd614', textTransform: 'uppercase', marginBottom: '12px' }}>What's Included</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {s.includes.map((item, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#bbb' }}>
+                  <div style={{ width: '5px', height: '5px', background: '#6fd614', borderRadius: '50%', flexShrink: 0 }} />
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Quote CTA */}
+          <button
+            onClick={() => onQuote(s.id)}
+            style={{
+              width: '100%', background: '#6fd614', color: '#0d0d0d', border: 'none',
+              padding: '14px', borderRadius: '6px', fontFamily: "'Barlow Condensed', sans-serif",
+              fontWeight: 800, fontSize: '15px', letterSpacing: '1px', textTransform: 'uppercase',
+              cursor: 'pointer', transition: 'all 0.2s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background='#7fff1a'; }}
+            onMouseLeave={e => { e.currentTarget.style.background='#6fd614'; }}
+          >
+            Quote {s.title} →
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Services({ onQuote }) {
+  return (
+    <section id="services" style={{ background: '#111', padding: '100px 60px' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <div style={{ marginBottom: '60px' }}>
+          <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '13px', letterSpacing: '3px', color: '#6fd614', textTransform: 'uppercase' }}>What We Do</span>
+          <h2 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: 'clamp(40px, 5vw, 64px)', textTransform: 'uppercase', marginTop: '8px', lineHeight: 1 }}>Our Services</h2>
+          <p style={{ color: '#666', fontSize: '15px', marginTop: '14px', maxWidth: '480px', lineHeight: 1.7 }}>Click any service to learn more and get a tailored quote.</p>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '2px' }}>
+          {services.map(s => (
+            <ServiceCard key={s.id} s={s} onQuote={onQuote} />
+          ))}
+        </div>
+        <div style={{ marginTop: '60px', textAlign: 'center' }}>
+          <button onClick={() => onQuote(null)} style={{
+            background: 'transparent', color: '#6fd614', border: '2px solid #6fd614',
+            padding: '16px 48px', borderRadius: '6px', fontFamily: "'Barlow Condensed', sans-serif",
+            fontWeight: 700, fontSize: '17px', letterSpacing: '1.5px', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 0.2s',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background='#6fd614'; e.currentTarget.style.color='#0d0d0d'; }}
+            onMouseLeave={e => { e.currentTarget.style.background='transparent'; e.currentTarget.style.color='#6fd614'; }}
+          >Get a Quote for Multiple Services</button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Gallery() {
+  const photos = [
+    { src: PHOTOS.mowedFront, label: 'Residential Lawn' },
+    { src: PHOTOS.hedge, label: 'Hedge Trimming' },
+    { src: PHOTOS.backyard, label: 'Backyard Mow' },
+    { src: PHOTOS.edgedPath, label: 'Edge Work' },
+  ];
+  return (
+    <section id="gallery" style={{ background: '#0d0d0d', padding: '100px 60px' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <div style={{ marginBottom: '60px' }}>
+          <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '13px', letterSpacing: '3px', color: '#6fd614', textTransform: 'uppercase' }}>Recent Work</span>
+          <h2 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: 'clamp(40px, 5vw, 64px)', textTransform: 'uppercase', marginTop: '8px', lineHeight: 1 }}>Our Work</h2>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gridTemplateRows: '280px 280px', gap: '6px' }}>
+          {photos.map((p, i) => (
+            <div key={i} style={{
+              gridRow: i === 0 ? '1 / 3' : 'auto',
+              position: 'relative', overflow: 'hidden', cursor: 'pointer',
+            }}>
+              <img src={p.src} alt={p.label} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
+                onMouseEnter={e => e.target.style.transform='scale(1.04)'}
+                onMouseLeave={e => e.target.style.transform='scale(1)'}
+              />
+              <div style={{
+                position: 'absolute', bottom: 0, left: 0, right: 0,
+                padding: '20px 20px 16px',
+                background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
+              }}>
+                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '16px', letterSpacing: '1px', textTransform: 'uppercase', color: '#6fd614' }}>{p.label}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ marginTop: '32px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '12px' }}>
+          <video autoPlay muted={true} loop playsInline style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px', background: '#000' }}>
+            <source src="clip1.mp4" type="video/mp4" />
+          </video>
+          <video autoPlay muted={true} loop playsInline style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px', background: '#000' }}>
+            <source src="clip2.mp4" type="video/mp4" />
+          </video>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function About({ onQuote }) {
+  const stats = [
+    { val: '500+', label: 'Jobs Completed' },
+    { val: '5★', label: 'Average Rating' },
+    { val: 'Same Week', label: 'Turnaround' },
+    { val: 'All Sizes', label: 'Properties Covered' },
+  ];
+  return (
+    <section id="about" style={{ background: '#111', padding: '100px 60px' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
+        <div>
+          <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '13px', letterSpacing: '3px', color: '#6fd614', textTransform: 'uppercase' }}>Why Choose Us</span>
+          <h2 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: 'clamp(36px, 4vw, 56px)', textTransform: 'uppercase', marginTop: '8px', lineHeight: 1, marginBottom: '24px' }}>Local, Reliable &amp; Proud of Our Work</h2>
+          <p style={{ color: '#999', lineHeight: 1.8, fontSize: '16px', marginBottom: '20px' }}>
+            GAMS is a locally-owned and operated garden and mowing service. We show up on time, do the job right, and leave your property looking its absolute best.
+          </p>
+          <p style={{ color: '#999', lineHeight: 1.8, fontSize: '16px', marginBottom: '40px' }}>
+            From small suburban lawns to large acreage blocks, we've got the equipment and experience to handle it all — at a fair price with no hidden fees.
+          </p>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <button onClick={onQuote} style={{
+              background: '#6fd614', color: '#0d0d0d', border: 'none',
+              padding: '14px 36px', borderRadius: '6px', fontFamily: "'Barlow Condensed', sans-serif",
+              fontWeight: 800, fontSize: '16px', letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer',
+            }}>Get a Quote</button>
+            <a href="tel:0422633941" style={{
+              color: '#f2f2f0', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px',
+              fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '17px',
+            }}>📞 0422 633 941</a>
+          </div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px' }}>
+          {stats.map((s, i) => (
+            <div key={i} style={{ background: '#141414', padding: '36px 28px', borderTop: '3px solid #6fd614' }}>
+              <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: '40px', color: '#6fd614', lineHeight: 1 }}>{s.val}</div>
+              <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '15px', color: '#888', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '6px' }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CtaBanner({ onQuote }) {
+  return (
+    <section style={{
+      background: '#6fd614', padding: '80px 60px', textAlign: 'center',
+    }}>
+      <h2 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: 'clamp(36px, 5vw, 72px)', color: '#0d0d0d', textTransform: 'uppercase', lineHeight: 1, marginBottom: '16px' }}>
+        Ready for a Tidy Yard?
+      </h2>
+      <p style={{ color: 'rgba(0,0,0,0.6)', fontSize: '18px', marginBottom: '36px', fontWeight: 400 }}>
+        Get in touch today — no obligation, fast response.
+      </p>
+      <button onClick={onQuote} style={{
+        background: '#0d0d0d', color: '#6fd614', border: 'none',
+        padding: '18px 56px', borderRadius: '6px', fontFamily: "'Barlow Condensed', sans-serif",
+        fontWeight: 800, fontSize: '20px', letterSpacing: '1.5px', textTransform: 'uppercase', cursor: 'pointer',
+        transition: 'all 0.2s',
+      }}
+        onMouseEnter={e => { e.target.style.background='#1a1a1a'; }}
+        onMouseLeave={e => { e.target.style.background='#0d0d0d'; }}
+      >Request a Free Quote</button>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer style={{ background: '#0a0a0a', padding: '60px 60px 32px', borderTop: '1px solid #1e1e1e' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '60px', marginBottom: '48px' }}>
+          <div>
+            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: '36px', letterSpacing: '2px', marginBottom: '16px' }}>
+              GAMS<span style={{ color: '#6fd614' }}>.</span>
+            </div>
+            <p style={{ color: '#666', fontSize: '14px', lineHeight: 1.8, maxWidth: '300px' }}>Garden and Mowing Services. Professional, reliable and locally owned.</p>
+            <div style={{ marginTop: '20px', display: 'flex', gap: '12px' }}>
+              {[['IG', 'https://www.instagram.com/gardenandmowingservices/']].map(([s, href]) => (
+                <a key={s} href={href} target="_blank" rel="noopener noreferrer" style={{ width: '36px', height: '36px', background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontFamily: "'Barlow Condensed', sans-serif", fontSize: '12px', fontWeight: 700, color: '#666', transition: 'all 0.2s', textDecoration: 'none' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor='#6fd614'; e.currentTarget.style.color='#6fd614'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor='#2a2a2a'; e.currentTarget.style.color='#666'; }}
+                >{s}</a>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '13px', letterSpacing: '2px', color: '#6fd614', textTransform: 'uppercase', marginBottom: '20px' }}>Services</div>
+            {services.map(s => (
+              <div key={s.id} style={{ color: '#666', fontSize: '14px', marginBottom: '8px', cursor: 'pointer', transition: 'color 0.2s' }}
+                onMouseEnter={e => e.target.style.color='#f2f2f0'}
+                onMouseLeave={e => e.target.style.color='#666'}
+              >{s.title}</div>
+            ))}
+          </div>
+          <div>
+            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '13px', letterSpacing: '2px', color: '#6fd614', textTransform: 'uppercase', marginBottom: '20px' }}>Contact</div>
+            <div style={{ color: '#666', fontSize: '14px', marginBottom: '12px' }}>📞 0422 633 941</div>
+            <div style={{ color: '#666', fontSize: '14px', marginBottom: '12px' }}>📍 Sunshine Coast, QLD</div>
+            <div style={{ color: '#666', fontSize: '14px' }}>Mon–Sat: 7am – 5pm</div>
+          </div>
+        </div>
+        <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ color: '#444', fontSize: '13px' }}>© 2026 GAMS Garden and Mowing Services. All rights reserved.</span>
+          <span style={{ color: '#444', fontSize: '13px' }}>ABN: XX XXX XXX XXX</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function QuoteModal({ onClose, preService }) {
+  const [step, setStep] = useState(0);
+  const [form, setForm] = useState({
+    services: preService ? [preService] : [],
+    propertyType: '',
+    size: '',
+    frequency: '',
+    address: '',
+    notes: '',
+    name: '',
+    phone: '',
+    email: '',
+    preferredContact: 'phone',
+  });
+
+  const update = (k, v) => setForm(p => ({ ...p, [k]: v }));
+  const toggleService = (id) => {
+    setForm(p => ({ ...p, services: p.services.includes(id) ? p.services.filter(x => x !== id) : [...p.services, id] }));
+  };
+
+  // ===========================================================================
+  // APPS_SCRIPT_URL — paste your Web App deployment URL here (ends in /exec)
+  // After running setup() in Apps Script, click Deploy → New deployment →
+  // Web app → "Anyone" → Deploy, then copy the URL into the line below.
+  // ===========================================================================
+  const APPS_SCRIPT_URL = 'https://hooks.zapier.com/hooks/catch/27302472/uvux9y4/';
+
+  const handleSubmit = async () => {
+    const lead = {
+      name: form.name,
+      phone: form.phone,
+      email: form.email,
+      address: form.address,
+      services: form.services.map(id => services.find(s => s.id === id)?.title).join(', '),
+      propertyType: form.propertyType,
+      size: form.size,
+      frequency: form.frequency,
+      notes: form.notes,
+      preferredContact: form.preferredContact,
+      submittedAt: new Date().toISOString(),
+      source: 'website_quote_form',
+    };
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(lead),
+      });
+    } catch (e) {
+      console.error('Apps Script submission error:', e);
+    }
+    setStep(3);
+  };
+
+  const inputStyle = { width: '100%', background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: '6px', padding: '12px 16px', color: '#f2f2f0', fontSize: '15px', fontFamily: "'Barlow', sans-serif", outline: 'none', transition: 'border-color 0.2s' };
+  const labelStyle = { display: 'block', fontFamily: "'Barlow Condensed', sans-serif", fontSize: '13px', letterSpacing: '1px', color: '#888', textTransform: 'uppercase', marginBottom: '8px' };
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
+      onClick={e => e.target === e.currentTarget && onClose()}>
+      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(6px)' }} />
+      <div style={{ position: 'relative', background: '#141414', border: '1px solid #252525', borderRadius: '12px', width: '100%', maxWidth: '560px', overflow: 'hidden', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+        {/* Header */}
+        <div style={{ background: '#0d0d0d', padding: '28px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #1e1e1e' }}>
+          <div>
+            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: '24px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+              {step < 3 ? 'Get a Free Quote' : 'Quote Requested!'}
+            </div>
+            {step < 3 && <div style={{ color: '#666', fontSize: '13px', marginTop: '4px' }}>Step {step + 1} of 3 — {quoteSteps[step].title}</div>}
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#666', fontSize: '22px', cursor: 'pointer', lineHeight: 1 }}>✕</button>
+        </div>
+
+        {/* Progress bar */}
+        {step < 3 && (
+          <div style={{ height: '3px', background: '#1a1a1a' }}>
+            <div style={{ height: '100%', background: '#6fd614', width: `${((step + 1) / 3) * 100}%`, transition: 'width 0.4s ease' }} />
+          </div>
+        )}
+
+        {/* Body */}
+        <div style={{ padding: '32px', overflowY: 'auto', flex: 1 }}>
+          {step === 0 && (
+            <div>
+              <p style={{ color: '#888', marginBottom: '24px', fontSize: '15px' }}>Select all that apply:</p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                {services.map(s => {
+                  const sel = form.services.includes(s.id);
+                  return (
+                    <div key={s.id} onClick={() => toggleService(s.id)} style={{
+                      padding: '16px', borderRadius: '8px', cursor: 'pointer',
+                      border: sel ? '2px solid #6fd614' : '2px solid #252525',
+                      background: sel ? 'rgba(111,214,20,0.08)' : '#1a1a1a',
+                      transition: 'all 0.2s',
+                    }}>
+                      <div style={{ fontSize: '22px', marginBottom: '6px' }}>{s.icon}</div>
+                      <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '15px', color: sel ? '#6fd614' : '#f2f2f0', textTransform: 'uppercase', transition: 'color 0.2s' }}>{s.title}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {step === 1 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div>
+                <label style={labelStyle}>Property Type</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
+                  {['Residential', 'Acreage', 'Commercial'].map(t => (
+                    <div key={t} onClick={() => update('propertyType', t)} style={{
+                      padding: '12px', textAlign: 'center', borderRadius: '6px', cursor: 'pointer',
+                      border: form.propertyType === t ? '2px solid #6fd614' : '2px solid #252525',
+                      background: form.propertyType === t ? 'rgba(111,214,20,0.08)' : '#1a1a1a',
+                      fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '14px', textTransform: 'uppercase',
+                      color: form.propertyType === t ? '#6fd614' : '#888', transition: 'all 0.2s',
+                    }}>{t}</div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label style={labelStyle}>Approximate Block Size</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                  {['Small (< 400m²)', 'Medium (400–800m²)', 'Large (800m²–1 acre)', 'Acreage (1+ acres)'].map(t => (
+                    <div key={t} onClick={() => update('size', t)} style={{
+                      padding: '12px', borderRadius: '6px', cursor: 'pointer',
+                      border: form.size === t ? '2px solid #6fd614' : '2px solid #252525',
+                      background: form.size === t ? 'rgba(111,214,20,0.08)' : '#1a1a1a',
+                      fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '13px', textTransform: 'uppercase',
+                      color: form.size === t ? '#6fd614' : '#888', transition: 'all 0.2s',
+                    }}>{t}</div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label style={labelStyle}>How often?</label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                  {['Once', 'Fortnightly', 'Monthly', 'Unsure'].map(t => (
+                    <div key={t} onClick={() => update('frequency', t)} style={{
+                      padding: '10px', textAlign: 'center', borderRadius: '6px', cursor: 'pointer',
+                      border: form.frequency === t ? '2px solid #6fd614' : '2px solid #252525',
+                      background: form.frequency === t ? 'rgba(111,214,20,0.08)' : '#1a1a1a',
+                      fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '13px', textTransform: 'uppercase',
+                      color: form.frequency === t ? '#6fd614' : '#888', transition: 'all 0.2s',
+                    }}>{t}</div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label style={labelStyle}>Property Address</label>
+                <input style={inputStyle} placeholder="Street address or suburb" value={form.address} onChange={e => update('address', e.target.value)}
+                  onFocus={e => e.target.style.borderColor='#6fd614'}
+                  onBlur={e => e.target.style.borderColor='#2a2a2a'} />
+              </div>
+              <div>
+                <label style={labelStyle}>Additional Notes (optional)</label>
+                <textarea style={{ ...inputStyle, resize: 'vertical', minHeight: '80px' }} placeholder="Anything else we should know?" value={form.notes} onChange={e => update('notes', e.target.value)}
+                  onFocus={e => e.target.style.borderColor='#6fd614'}
+                  onBlur={e => e.target.style.borderColor='#2a2a2a'} />
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div>
+                <label style={labelStyle}>Full Name</label>
+                <input style={inputStyle} placeholder="John Smith" value={form.name} onChange={e => update('name', e.target.value)}
+                  onFocus={e => e.target.style.borderColor='#6fd614'}
+                  onBlur={e => e.target.style.borderColor='#2a2a2a'} />
+              </div>
+              <div>
+                <label style={labelStyle}>Phone Number</label>
+                <input style={inputStyle} placeholder="04XX XXX XXX" value={form.phone} onChange={e => update('phone', e.target.value)}
+                  onFocus={e => e.target.style.borderColor='#6fd614'}
+                  onBlur={e => e.target.style.borderColor='#2a2a2a'} />
+              </div>
+              <div>
+                <label style={labelStyle}>Email Address</label>
+                <input style={inputStyle} placeholder="you@example.com" value={form.email} onChange={e => update('email', e.target.value)}
+                  onFocus={e => e.target.style.borderColor='#6fd614'}
+                  onBlur={e => e.target.style.borderColor='#2a2a2a'} />
+              </div>
+              <div>
+                <label style={labelStyle}>Preferred Contact Method</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
+                  {['phone', 'sms', 'email'].map(t => (
+                    <div key={t} onClick={() => update('preferredContact', t)} style={{
+                      padding: '12px', textAlign: 'center', borderRadius: '6px', cursor: 'pointer',
+                      border: form.preferredContact === t ? '2px solid #6fd614' : '2px solid #252525',
+                      background: form.preferredContact === t ? 'rgba(111,214,20,0.08)' : '#1a1a1a',
+                      fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 600, fontSize: '14px', textTransform: 'uppercase',
+                      color: form.preferredContact === t ? '#6fd614' : '#888', transition: 'all 0.2s',
+                    }}>{t}</div>
+                  ))}
+                </div>
+              </div>
+              <div style={{ background: 'rgba(111,214,20,0.06)', border: '1px solid rgba(111,214,20,0.15)', borderRadius: '8px', padding: '16px' }}>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '13px', color: '#6fd614', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>Your Quote Summary</div>
+                <div style={{ fontSize: '14px', color: '#888', lineHeight: 1.7 }}>
+                  <div><b style={{ color: '#ccc' }}>Services:</b> {form.services.map(id => services.find(s => s.id === id)?.title).join(', ') || '—'}</div>
+                  <div><b style={{ color: '#ccc' }}>Property:</b> {form.propertyType || '—'} · {form.size || '—'}</div>
+                  <div><b style={{ color: '#ccc' }}>Frequency:</b> {form.frequency || '—'}</div>
+                  <div><b style={{ color: '#ccc' }}>Address:</b> {form.address || '—'}</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div style={{ textAlign: 'center', padding: '20px 0' }}>
+              <div style={{ fontSize: '64px', marginBottom: '20px' }}>✅</div>
+              <h3 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: '32px', textTransform: 'uppercase', color: '#6fd614', marginBottom: '12px' }}>You're on the list!</h3>
+              <p style={{ color: '#888', fontSize: '16px', lineHeight: 1.7, marginBottom: '24px' }}>
+                Thanks {form.name.split(' ')[0] || 'there'}! We've received your quote request and will be in touch within 24 hours via {form.preferredContact}.
+              </p>
+              <p style={{ color: '#555', fontSize: '14px' }}>In the meantime, call us directly on <a href="tel:0422633941" style={{ color: '#6fd614', textDecoration: 'none' }}>0422 633 941</a></p>
+              <button onClick={onClose} style={{
+                marginTop: '28px', background: '#6fd614', color: '#0d0d0d', border: 'none',
+                padding: '14px 40px', borderRadius: '6px', fontFamily: "'Barlow Condensed', sans-serif",
+                fontWeight: 800, fontSize: '16px', textTransform: 'uppercase', letterSpacing: '1px', cursor: 'pointer',
+              }}>Close</button>
+            </div>
+          )}
+        </div>
+
+        {/* Footer buttons */}
+        {step < 3 && (
+          <div style={{ padding: '20px 32px', background: '#0d0d0d', borderTop: '1px solid #1e1e1e', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <button onClick={() => step > 0 ? setStep(s => s - 1) : onClose()} style={{ background: 'none', border: '1px solid #2a2a2a', color: '#888', padding: '12px 24px', borderRadius: '6px', cursor: 'pointer', fontFamily: "'Barlow Condensed', sans-serif", fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+              {step === 0 ? 'Cancel' : 'Back'}
+            </button>
+            <button onClick={() => step < 2 ? setStep(s => s + 1) : handleSubmit()} style={{
+              background: '#6fd614', color: '#0d0d0d', border: 'none',
+              padding: '12px 36px', borderRadius: '6px', fontFamily: "'Barlow Condensed', sans-serif",
+              fontWeight: 800, fontSize: '15px', letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer',
+            }}>
+              {step < 2 ? 'Next' : 'Submit Quote Request'}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [quoteOpen, setQuoteOpen] = useState(false);
+  const [preService, setPreService] = useState(null);
+
+  const openQuote = (serviceId = null) => {
+    setPreService(serviceId);
+    setQuoteOpen(true);
+  };
+
+  return (
+    <>
+      <Nav onQuote={() => openQuote()} />
+      <Hero onQuote={() => openQuote()} />
+      <Services onQuote={openQuote} />
+      <Gallery />
+      <About onQuote={() => openQuote()} />
+      <CtaBanner onQuote={() => openQuote()} />
+      <Footer />
+      {quoteOpen && <QuoteModal onClose={() => setQuoteOpen(false)} preService={preService} />}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
