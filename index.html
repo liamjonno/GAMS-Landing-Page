@@ -711,11 +711,11 @@ function QuoteModal({ onClose, preService }) {
   };
 
   // ===========================================================================
-  // APPS_SCRIPT_URL — paste your Web App deployment URL here (ends in /exec)
+  // FormSubmit endpoint — emails go directly to Ben, free service
   // After running setup() in Apps Script, click Deploy → New deployment →
   // Web app → "Anyone" → Deploy, then copy the URL into the line below.
   // ===========================================================================
-  const APPS_SCRIPT_URL = 'https://hooks.zapier.com/hooks/catch/27302472/uvux9y4/';
+  const FORM_ENDPOINT = 'https://formsubmit.co/ajax/gardenandmowingservices@gmail.com';
 
   const handleSubmit = async () => {
     const lead = {
@@ -733,14 +733,17 @@ function QuoteModal({ onClose, preService }) {
       source: 'website_quote_form',
     };
     try {
-      await fetch(APPS_SCRIPT_URL, {
+      await fetch(FORM_ENDPOINT, {
         method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(lead),
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          ...lead,
+          _subject: 'New GAMS quote from ' + form.name,
+          _captcha: 'false',
+        }),
       });
     } catch (e) {
-      console.error('Apps Script submission error:', e);
+      console.error('Form submission error:', e);
     }
     setStep(3);
   };
