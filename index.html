@@ -3,10 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self'; connect-src 'self' https://formsubmit.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://formsubmit.co;">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="index, follow">
+<meta name="description" content="GAMS — Garden and Mowing Services. Professional lawn mowing, hedging, whipper snippering and clean-ups for residential and acreage properties across the Sunshine Coast.">
 <title>GAMS – Garden and Mowing Services</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -83,7 +88,7 @@
   .fade-up-2 { animation: fadeUp 0.7s 0.4s ease both; }
   .fade-up-3 { animation: fadeUp 0.7s 0.6s ease both; }
   .fade-up-4 { animation: fadeUp 0.7s 0.8s ease both; }
-  
+
   /* Tweaks panel */
   #tweaks-panel {
     display: none;
@@ -127,7 +132,7 @@
     #home a, #home button { font-size: 14px !important; }
     /* Quote modal — full width */
     [role="dialog"], div[style*="position: fixed"][style*="z-index: 9999"] { padding: 16px !important; }
-    [role="dialog"] > div, div[style*="position: fixed"][style*="z-index: 9999"] > div { 
+    [role="dialog"] > div, div[style*="position: fixed"][style*="z-index: 9999"] > div {
       max-width: 100% !important; width: 100% !important; max-height: 92vh !important; padding: 24px 18px !important;
     }
     /* Stat boxes / about — reduce font sizes */
@@ -280,14 +285,14 @@ const services = [
     desc: 'Large blocks and rural properties handled with the right equipment. Efficient, thorough and competitively priced.',
     detail: 'Acreage mowing requires the right machinery and the experience to handle uneven terrain, fence lines, and obstacles. We come equipped for large blocks — finishing the job efficiently without cutting corners on quality.',
     includes: ['Blocks from 1 to 10+ acres', 'Rough & paddock mowing', 'Fence-line clearing', 'Flexible scheduling'],
-    photo: 'PHOTO%201.JPG',
+    photo: 'ACREAGE-LAWNS.JPG',
   },
   {
     id: 'whipper', icon: '🌿', title: 'Whipper Snippering',
     desc: 'Clean edges and tight spots that mowers can\'t reach. The finishing touch that makes all the difference.',
     detail: 'A mowed lawn only looks its best when the edges are sharp. Our whipper snippering service tackles garden beds, fence lines, driveways, paths, and any obstacle a mower can\'t get to — leaving crisp, defined borders throughout.',
     includes: ['Fence & garden bed edging', 'Path & driveway borders', 'Around trees & posts', 'Always included with mowing'],
-    photo: 'PHOTO%202.JPG',
+    photo: 'WHIPPER-SNIPPERING.JPG',
   },
   {
     id: 'spraying', icon: '💧', title: 'Spraying',
@@ -308,7 +313,7 @@ const services = [
     desc: 'Full garden clean-ups — leaf blowing, debris removal, and yard clearing for a fresh start or seasonal tidy.',
     detail: 'Sometimes a yard needs more than just a mow. Our garden clean-up service is perfect for overgrown properties, end-of-lease cleans, seasonal tidies, or just getting on top of things. We\'ll clear it out, tidy it up and leave it looking great.',
     includes: ['Leaf blowing & collection', 'Debris & branch removal', 'Overgrown area clearing', 'End-of-lease & pre-sale tidies'],
-    photo: 'PHOTO%205.JPG',
+    photo: 'CLEAN-UPS.JPG',
   },
 ];
 
@@ -395,7 +400,7 @@ function Hero({ onQuote }) {
         </div>
         <h1 className="fade-up-2" style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: 'clamp(64px, 10vw, 120px)', lineHeight: 0.9, letterSpacing: '-1px', marginBottom: '28px', textTransform: 'uppercase' }}>
           Your Lawn.<br />
-          <span style={{ color: '#6fd614' }}>Handled.</span>
+          <span style={{ color: '#6fd614' }}>Sorted.</span>
         </h1>
         <p className="fade-up-3" style={{ fontSize: '18px', fontWeight: 300, color: '#bbb', maxWidth: '520px', lineHeight: 1.7, marginBottom: '48px' }}>
           Professional mowing, hedging, spraying and garden clean-ups for residential and acreage properties across the Sunshine Coast.
