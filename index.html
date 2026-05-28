@@ -198,10 +198,11 @@ const { useState, useEffect, useRef, useCallback } = React;
 
 const GREEN = '#6fd614';
 const PHOTOS = {
-  edgedPath: 'hero-edge.jpg',
+  edgedPath: 'gallery-09.jpg',
   mowedFront: 'hero-residential.jpg',
   hedge: 'HEDGE%202.JPG',
   backyard: 'hero-backyard.jpg',
+  whipper: 'gallery-04.jpg',
 };
 
 const services = [
@@ -587,10 +588,11 @@ function Services({ onQuote }) {
 function Gallery() {
   const [lightbox, setLightbox] = useState(null);
   const photos = [
-    { src: PHOTOS.mowedFront, label: 'Residential Lawn' },
+    { src: PHOTOS.mowedFront, label: 'Acreage Lawn' },
     { src: PHOTOS.hedge, label: 'Hedge Trimming' },
     { src: PHOTOS.backyard, label: 'Backyard Mow' },
     { src: PHOTOS.edgedPath, label: 'Edge Work' },
+    { src: PHOTOS.whipper, label: 'Whipper Snippering' }
   ];
 
   useEffect(() => {
