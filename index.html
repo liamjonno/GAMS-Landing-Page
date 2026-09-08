@@ -51,7 +51,7 @@
   .hero-slide:nth-child(3) img { animation: kenBurns3 18s ease-in-out infinite; }
 
   .hero-static { animation: none !important; opacity: 1 !important; }
-  .hero-static img { animation: kenBurns1 26s ease-in-out infinite alternate; filter: brightness(0.34); }
+  .hero-static img { animation: kenBurns1 26s ease-in-out infinite alternate; filter: brightness(0.55) !important; }
 
   .mow-stripe { position: absolute; left: 0; height: 48px; background: rgba(111,214,20,0.07); animation: mowStripe 4s ease-in-out infinite; pointer-events: none; }
 
@@ -111,6 +111,8 @@
     section [style*="gridTemplateColumns"] { display: grid !important; grid-template-columns: 1fr !important; }
     #gallery [style*="grid"] { grid-template-columns: 1fr !important; grid-template-rows: auto !important; gap: 8px !important; }
     #gallery [style*="grid"] > div { grid-row: auto !important; height: 240px !important; }
+    .gallery-mosaic { grid-template-columns: 1fr !important; grid-template-rows: none !important; grid-auto-rows: 240px !important; }
+    .gallery-mosaic > div { grid-area: auto !important; }
     #home a, #home button { font-size: 14px !important; }
     [role="dialog"], div[style*="position: fixed"][style*="z-index: 2000"] { padding: 16px !important; }
     [role="dialog"] > div, div[style*="position: fixed"][style*="z-index: 2000"] > div { max-width: 100% !important; width: 100% !important; max-height: 92vh !important; padding: 24px 18px !important; }
@@ -208,7 +210,7 @@ const PHOTOS = {
   backyard: 'hero-backyard.jpg',
   whipper: 'gallery-04.jpg',
   galleryA: 'gallery-new-01.jpg',
-  galleryB: 'gallery-new-02.jpg',
+  striped: 'cleanups-new.jpg',
 };
 
 const services = [
@@ -245,14 +247,14 @@ const services = [
     desc: 'Sharp, precise hedge trimming and shaping. We take pride in clean lines and tidy borders.',
     detail: 'Overgrown hedges can take over a yard fast. We provide precise trimming and shaping for all hedge types — from low garden borders to tall privacy screens. The result is always clean, level lines that enhance your property\'s street appeal.',
     includes: ['All hedge types & heights', 'Formal shaping & levelling', 'Debris removal & cleanup', 'One-off or regular visits'],
-    photo: 'hedging-new.jpg',
+    photo: 'gallery-new-02.jpg',
   },
   {
     id: 'cleaning', icon: '🧹', title: 'Clean Ups',
     desc: 'Full garden clean-ups — leaf blowing, debris removal, and yard clearing for a fresh start or seasonal tidy.',
     detail: 'Sometimes a yard needs more than just a mow. Our garden clean-up service is perfect for overgrown properties, end-of-lease cleans, seasonal tidies, or just getting on top of things. We\'ll clear it out, tidy it up and leave it looking great.',
     includes: ['Leaf blowing & collection', 'Debris & branch removal', 'Overgrown area clearing', 'End-of-lease & pre-sale tidies'],
-    photo: 'cleanups-new.jpg',
+    photo: 'hedging-new.jpg',
   },
 ];
 
@@ -591,13 +593,13 @@ function Services({ onQuote }) {
 function Gallery() {
   const [lightbox, setLightbox] = useState(null);
   const photos = [
-    { src: PHOTOS.galleryA, label: 'Hedge Trimming' },
-    { src: PHOTOS.galleryB, label: 'Hedge & Edging' },
-    { src: PHOTOS.backyard, label: 'Backyard Mow' },
-    { src: PHOTOS.whipper, label: 'Whipper Snippering' },
-    { src: PHOTOS.hedge, label: 'Hedge Work' },
-    { src: PHOTOS.edgedPath, label: 'Edge Work' },
-    { src: PHOTOS.mowedFront, label: 'Residential Lawn' }
+    { src: PHOTOS.galleryA, label: 'Hedge Trimming', area: '1 / 1 / 3 / 3' },
+    { src: PHOTOS.edgedPath, label: 'Edge Work', area: '1 / 3 / 2 / 5' },
+    { src: PHOTOS.striped, label: 'Lawn Mowing', area: '2 / 3 / 3 / 4' },
+    { src: PHOTOS.backyard, label: 'Backyard Mow', area: '2 / 4 / 3 / 5' },
+    { src: PHOTOS.whipper, label: 'Whipper Snippering', area: '3 / 1 / 4 / 2' },
+    { src: PHOTOS.hedge, label: 'Hedge Work', area: '3 / 2 / 4 / 3' },
+    { src: PHOTOS.mowedFront, label: 'Acreage Lawn', area: '3 / 3 / 4 / 5' }
   ];
 
   useEffect(() => {
@@ -615,10 +617,10 @@ function Gallery() {
           <h2 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: 'clamp(40px, 5vw, 64px)', textTransform: 'uppercase', marginTop: '8px', lineHeight: 1 }}>Our Work</h2>
         </SR>
         <SR delay={0.1}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridAutoRows: '240px', gap: '6px' }}>
+          <div className="gallery-mosaic" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gridTemplateRows: 'repeat(3, 220px)', gap: '6px' }}>
             {photos.map((p, i) => (
               <div key={i} className="gallery-item" onClick={() => setLightbox(p)}
-                style={{ gridColumn: i === photos.length - 1 ? '1 / -1' : 'auto', position: 'relative', overflow: 'hidden', cursor: 'zoom-in' }}>
+                style={{ gridArea: p.area, position: 'relative', overflow: 'hidden', cursor: 'zoom-in' }}>
                 <img src={p.src} alt={p.label} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.4s ease' }}
                   onMouseEnter={e => e.target.style.transform = 'scale(1.05)'}
                   onMouseLeave={e => e.target.style.transform = 'scale(1)'}
