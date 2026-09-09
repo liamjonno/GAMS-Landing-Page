@@ -590,21 +590,6 @@ function Services({ onQuote }) {
 }
 
 /* ── Gallery ── */
-function Gallery() {
-  const [lightbox, setLightbox] = useState(null);
-  const photos = [
-    { src: 'work-01.jpg', label: 'On Site' },
-    { src: 'work-02.jpg', label: 'Whipper Snippering' },
-    { src: 'work-03.jpg', label: 'Acreage Mowing' },
-    { src: 'work-04.jpg', label: 'Edging' },
-    { src: 'work-05.jpg', label: 'Acreage Lawns' },
-    { src: 'work-06.jpg', label: 'Hedging' },
-    { src: 'work-07.jpg', label: 'Clean Ups' },
-    { src: 'work-08.jpg', label: 'Residential Lawns' },
-    { src: 'work-09.jpg', label: 'Slope Mowing' },
-    { src: 'work-10.jpg', label: 'Lawn Mowing' },
-    { src: 'work-11.jpg', label: 'Finished Lawn', wide: true }
-  ];
 
   useEffect(() => {
     if (!lightbox) return;
