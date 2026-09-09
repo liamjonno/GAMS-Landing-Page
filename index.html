@@ -444,11 +444,11 @@ function Hero({ onQuote }) {
       {stripeOffsets.map((top, i) => (
         <div key={i} className="mow-stripe" style={{ top: `${top}%`, animationDelay: `${i * 0.7}s`, animationDuration: `${3.5 + i * 0.4}s` }} />
       ))}
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(105deg, rgba(13,13,13,0.95) 0%, rgba(13,13,13,0.6) 55%, rgba(111,214,20,0.04) 100%)', zIndex: 1 }} />
-      <div style={{ position: 'absolute', left: 0, top: '20%', bottom: '20%', width: '4px', background: GREEN, borderRadius: '0 2px 2px 0', zIndex: 2 }} />
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(255deg, rgba(13,13,13,0.95) 0%, rgba(13,13,13,0.6) 55%, rgba(111,214,20,0.04) 100%)', zIndex: 1 }} />
+      <div style={{ position: 'absolute', right: 0, top: '20%', bottom: '20%', width: '4px', background: GREEN, borderRadius: '2px 0 0 2px', zIndex: 2 }} />
 
-      <div style={{ position: 'relative', zIndex: 2, padding: '120px 80px 80px', maxWidth: '900px' }}>
-        <div className="fade-up-1" style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+      <div style={{ position: 'relative', zIndex: 2, padding: '120px 80px 80px', maxWidth: '900px', marginLeft: 'auto', textAlign: 'right' }}>
+        <div className="fade-up-1" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', marginBottom: '20px' }}>
           <div style={{ width: '40px', height: '2px', background: GREEN }} />
           <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '14px', letterSpacing: '3px', color: GREEN, textTransform: 'uppercase' }}>Sunshine Coast · Garden & Mowing Services</span>
         </div>
@@ -456,10 +456,10 @@ function Hero({ onQuote }) {
           Your Lawn.<br />
           <span style={{ color: GREEN }}>Sorted.</span>
         </h1>
-        <p className="fade-up-3" style={{ fontSize: '18px', fontWeight: 300, color: '#bbb', maxWidth: '520px', lineHeight: 1.7, marginBottom: '48px' }}>
+        <p className="fade-up-3" style={{ fontSize: '18px', fontWeight: 300, color: '#bbb', maxWidth: '520px', marginLeft: 'auto', lineHeight: 1.7, marginBottom: '48px' }}>
           Professional mowing, hedging, spraying and garden clean-ups for residential and acreage properties across the Sunshine Coast.
         </p>
-        <div className="fade-up-4" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <div className="fade-up-4" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-end' }}>
           <button onClick={onQuote} style={{
             background: GREEN, color: '#0d0d0d', border: 'none',
             padding: '18px 44px', borderRadius: '6px', fontFamily: "'Barlow Condensed', sans-serif",
@@ -477,7 +477,7 @@ function Hero({ onQuote }) {
             0422 633 941
           </a>
         </div>
-        <div style={{ position: 'absolute', bottom: '-60px', left: '80px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', opacity: 0.35 }}>
+        <div style={{ position: 'absolute', bottom: '-60px', right: '80px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', opacity: 0.35 }}>
           <div style={{ width: '1px', height: '40px', background: GREEN }} />
           <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '11px', letterSpacing: '2px', color: GREEN, textTransform: 'uppercase' }}>Scroll</span>
         </div>
