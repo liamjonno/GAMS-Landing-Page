@@ -33,7 +33,7 @@
   @keyframes kenBurns1 { 0% { transform: scale(1.08) translate(0%, 0%); } 100% { transform: scale(1.18) translate(-2%, -1%); } }
   @keyframes kenBurns2 { 0% { transform: scale(1.12) translate(-2%, -1%); } 100% { transform: scale(1.20) translate(1%, 1%); } }
   @keyframes kenBurns3 { 0% { transform: scale(1.10) translate(1%, 1%); } 100% { transform: scale(1.18) translate(-1%, 0%); } }
-  @keyframes fadeSlide { 0% { opacity: 0; } 8% { opacity: 1; } 33% { opacity: 1; } 41% { opacity: 0; } 100% { opacity: 0; } }
+  @keyframes fadeSlide { 0% { opacity: 0; } 6% { opacity: 1; } 25% { opacity: 1; } 31% { opacity: 0; } 100% { opacity: 0; } }
   @keyframes mowStripe { 0% { width: 0%; opacity: 0; } 10% { opacity: 0.12; } 60% { width: 100%; opacity: 0.12; } 100% { width: 100%; opacity: 0; } }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes pulse-green { 0%, 100% { box-shadow: 0 0 0 0 rgba(111,214,20,0.3); } 50% { box-shadow: 0 0 0 8px rgba(111,214,20,0); } }
@@ -41,17 +41,16 @@
   @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
   @keyframes scaleIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
 
-  .hero-slide { position: absolute; inset: 0; overflow: hidden; }
-  .hero-slide img { width: 100%; height: 100%; object-fit: cover; transform-origin: center center; filter: brightness(0.28); }
-  .hero-slide:nth-child(1) { animation: fadeSlide 18s infinite 0s; }
-  .hero-slide:nth-child(1) img { animation: kenBurns1 18s ease-in-out infinite; }
-  .hero-slide:nth-child(2) { animation: fadeSlide 18s infinite 6s; }
-  .hero-slide:nth-child(2) img { animation: kenBurns2 18s ease-in-out infinite; }
-  .hero-slide:nth-child(3) { animation: fadeSlide 18s infinite 12s; }
-  .hero-slide:nth-child(3) img { animation: kenBurns3 18s ease-in-out infinite; }
-
-  .hero-static { animation: none !important; opacity: 1 !important; }
-  .hero-static img { animation: kenBurns1 26s ease-in-out infinite alternate; filter: brightness(0.55) !important; }
+  .hero-slide { position: absolute; inset: 0; overflow: hidden; opacity: 0; }
+  .hero-slide img { width: 100%; height: 100%; object-fit: cover; transform-origin: center center; filter: brightness(0.5); }
+  .hero-slide:nth-child(1) { animation: fadeSlide 24s infinite 0s; }
+  .hero-slide:nth-child(1) img { animation: kenBurns1 24s ease-in-out infinite; }
+  .hero-slide:nth-child(2) { animation: fadeSlide 24s infinite 6s; }
+  .hero-slide:nth-child(2) img { animation: kenBurns2 24s ease-in-out infinite; }
+  .hero-slide:nth-child(3) { animation: fadeSlide 24s infinite 12s; }
+  .hero-slide:nth-child(3) img { animation: kenBurns3 24s ease-in-out infinite; }
+  .hero-slide:nth-child(4) { animation: fadeSlide 24s infinite 18s; }
+  .hero-slide:nth-child(4) img { animation: kenBurns1 24s ease-in-out infinite; }
 
   .mow-stripe { position: absolute; left: 0; height: 48px; background: rgba(111,214,20,0.07); animation: mowStripe 4s ease-in-out infinite; pointer-events: none; }
 
@@ -108,7 +107,6 @@
     section { padding: 60px 16px !important; }
     #home { padding: 100px 16px 60px !important; min-height: 90vh !important; }
     #home h1 { font-size: clamp(48px, 14vw, 80px) !important; line-height: 1 !important; }
-    .hero-static img { object-position: 26% center !important; }
     section [style*="gridTemplateColumns"] { display: grid !important; grid-template-columns: 1fr !important; }
     .gallery-mosaic { grid-template-columns: 1fr 1fr !important; grid-template-rows: none !important; grid-auto-rows: 168px !important; gap: 6px !important; }
     .gallery-mosaic > div { grid-area: auto !important; height: auto !important; }
@@ -267,9 +265,10 @@ const trustItems = [
 ];
 
 const serviceAreas = [
-  'Buderim', 'Maroochydore', 'Mooloolaba', 'Caloundra', 'Kawana Waters',
-  'Sippy Downs', 'Mountain Creek', 'Noosa', 'Coolum Beach', 'Nambour',
-  'Palmview', 'Bli Bli', 'Woombye', 'Yandina', 'Glass House Mountains',
+  'Bli Bli', 'Buderim', 'Caloundra', 'Caloundra West', 'Coolum Beach',
+  'Cooroy', 'Currimundi', 'Eumundi', 'Flaxton', 'Glass House Mountains',
+  'Golden Beach', 'Maleny', 'Maroochy River', 'Montville', 'Peregian Springs',
+  'Sunshine Coast', 'Twin Waters', 'Valdora',
 ];
 
 const quoteSteps = [
@@ -411,9 +410,11 @@ function Hero({ onQuote }) {
   const stripeOffsets = [15, 30, 45, 60, 75];
   return (
     <section id="home" style={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
-      <div className="hero-slide hero-static">
-        <img src={PHOTOS.hero} alt="" />
-      </div>
+      {[PHOTOS.hero, 'hero-2.jpg', 'hero-3.jpg', 'hero-4.jpg'].map((src, i) => (
+        <div key={i} className="hero-slide">
+          <img src={src} alt="" />
+        </div>
+      ))}
       {stripeOffsets.map((top, i) => (
         <div key={i} className="mow-stripe" style={{ top: `${top}%`, animationDelay: `${i * 0.7}s`, animationDuration: `${3.5 + i * 0.4}s` }} />
       ))}
@@ -569,7 +570,7 @@ function Gallery() {
     { src: 'work-01.jpg', label: 'On Site' },
     { src: 'work-02.jpg', label: 'Whipper Snippering' },
     { src: 'work-03.jpg', label: 'Acreage Mowing' },
-    { src: 'work-04.jpg', label: 'Edging' },
+    { src: 'work-04.jpg', label: 'Acreage Lawn' },
     { src: 'work-05.jpg', label: 'Acreage Lawns' },
     { src: 'work-06.jpg', label: 'Hedging' },
     { src: 'work-07.jpg', label: 'Clean Ups' },
@@ -778,7 +779,7 @@ function Footer() {
   return (
     <footer style={{ background: '#0a0a0a', padding: '60px 60px 32px', borderTop: '1px solid #1e1e1e' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1.2fr', gap: '48px', marginBottom: '48px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1.4fr', gap: '48px', marginBottom: '44px' }}>
           <div>
             <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: '36px', letterSpacing: '2px', marginBottom: '16px' }}>
               GAMS<span style={{ color: GREEN }}>.</span>
@@ -810,18 +811,20 @@ function Footer() {
               onMouseLeave={e => e.target.style.color = '#666'}
             >gardenandmowingservices<br />@gmail.com</a>
           </div>
-          <div>
-            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '13px', letterSpacing: '2px', color: GREEN, textTransform: 'uppercase', marginBottom: '20px' }}>Service Areas</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              {serviceAreas.map(area => (
-                <div key={area} style={{ color: '#555', fontSize: '13px' }}>{area}</div>
-              ))}
-            </div>
+        </div>
+        <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '32px', marginBottom: '28px' }}>
+          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '13px', letterSpacing: '2px', color: GREEN, textTransform: 'uppercase', marginBottom: '16px' }}>Service Areas</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', rowGap: '6px', color: '#666', fontSize: '13.5px', lineHeight: 1.6 }}>
+            {serviceAreas.map((area, i) => (
+              <span key={area} style={{ whiteSpace: 'nowrap' }}>
+                {area}{i < serviceAreas.length - 1 && <span style={{ color: '#333', margin: '0 12px' }}>•</span>}
+              </span>
+            ))}
           </div>
         </div>
-        <div style={{ borderTop: '1px solid #1a1a1a', paddingTop: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
           <span style={{ color: '#444', fontSize: '13px' }}>© 2026 GAMS Garden and Mowing Services. All rights reserved.</span>
-          <span style={{ color: '#444', fontSize: '13px' }}>ABN: XX XXX XXX XXX</span>
+          <span style={{ color: '#444', fontSize: '13px' }}>ABN: 24 699 665 800</span>
         </div>
       </div>
     </footer>
