@@ -258,33 +258,6 @@ const services = [
   },
 ];
 
-const testimonials = [
-  {
-    name: 'Sarah Mitchell', suburb: 'Buderim', rating: 5,
-    text: 'GAMS have been looking after our lawn for over a year and the results are always outstanding. They show up on time, work efficiently, and the yard looks incredible after every visit. Wouldn\'t use anyone else.',
-    service: 'Residential Mowing',
-  },
-  {
-    name: 'Tom Reynolds', suburb: 'Maroochydore', rating: 5,
-    text: 'We have a large acreage block and finding a reliable service has always been a challenge. GAMS showed up on time, knocked out the whole property in one visit, and the finish was excellent. Booked them in regularly since.',
-    service: 'Acreage Mowing',
-  },
-  {
-    name: 'Jenny K.', suburb: 'Caloundra', rating: 5,
-    text: 'Had a full garden clean-up done before putting the house on the market. The team cleared everything out, trimmed all the hedges perfectly, and the place looked like a show home. Our agent was seriously impressed.',
-    service: 'Clean Up & Hedging',
-  },
-  {
-    name: 'Dave Lawson', suburb: 'Nambour', rating: 5,
-    text: 'Quick to respond, very fair pricing, and the edge work is always razor sharp. The whipper snippering makes such a difference — every visit looks like it was done by people who actually take pride in their work.',
-    service: 'Mowing & Edging',
-  },
-  {
-    name: 'Lisa P.', suburb: 'Noosa Heads', rating: 5,
-    text: 'I was surprised at how fast they responded to my quote request — booked in the same week. Great price and my hedges have never looked better. Will 100% be a regular customer.',
-    service: 'Hedge Trimming',
-  },
-];
 
 const trustItems = [
   { icon: '🛡️', label: 'Fully Insured' },
@@ -648,74 +621,52 @@ function Gallery() {
   );
 }
 
-/* ── Testimonials ── */
+/* ── Reviews ── */
 function Testimonials() {
-  const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const ref = useRef(null);
-  const [sectionVis, setSectionVis] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setSectionVis(true); }, { threshold: 0.1 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!sectionVis || paused) return;
-    const t = setInterval(() => setActive(a => (a + 1) % testimonials.length), 5500);
-    return () => clearInterval(t);
-  }, [sectionVis, paused]);
-
-  const t = testimonials[active];
-
+  const REVIEW_URL = 'https://share.google/tL9AW4CiWLZwwfYCE';
   return (
-    <section style={{ background: '#111', padding: '100px 60px', borderTop: '1px solid #1a1a1a' }}>
-      <div style={{ maxWidth: '900px', margin: '0 auto' }} ref={ref}>
-        <SR style={{ marginBottom: '56px' }}>
+    <section id="reviews" style={{ background: '#111', padding: '100px 60px', borderTop: '1px solid #1a1a1a' }}>
+      <div style={{ maxWidth: '760px', margin: '0 auto', textAlign: 'center' }}>
+        <SR style={{ marginBottom: '48px' }}>
           <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '13px', letterSpacing: '3px', color: GREEN, textTransform: 'uppercase' }}>What Customers Say</span>
           <h2 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: 'clamp(36px, 5vw, 60px)', textTransform: 'uppercase', marginTop: '8px', lineHeight: 1 }}>Trusted by the<br /><span style={{ color: GREEN }}>Sunshine Coast</span></h2>
         </SR>
 
-        <div onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-          <div key={active} style={{ animation: 'fadeUp 0.5s ease both', background: '#141414', borderLeft: `3px solid ${GREEN}`, borderRadius: '0 8px 8px 0', padding: '40px 44px' }}>
-            <div style={{ marginBottom: '20px', display: 'flex', gap: '3px' }}>
-              {Array.from({ length: t.rating }).map((_, i) => (
-                <span key={i} style={{ color: GREEN, fontSize: '18px' }}>★</span>
-              ))}
-            </div>
-            <p style={{ fontSize: '17px', color: '#ccc', lineHeight: 1.75, marginBottom: '28px', fontStyle: 'italic', fontWeight: 300 }}>"{t.text}"</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div style={{ width: '44px', height: '44px', background: 'rgba(111,214,20,0.12)', border: `1px solid ${GREEN}`, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '18px', color: GREEN, flexShrink: 0 }}>
-                {t.name.charAt(0)}
-              </div>
-              <div>
-                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '17px', textTransform: 'uppercase', letterSpacing: '0.5px', color: '#f2f2f0' }}>{t.name}</div>
-                <div style={{ fontSize: '13px', color: '#666', marginTop: '2px' }}>{t.suburb} · <span style={{ color: GREEN }}>{t.service}</span></div>
+        <SR delay={0.1}>
+          <div style={{ background: '#141414', border: '1px solid #222', borderRadius: '16px', padding: '52px 40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
+            <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '13px', letterSpacing: '3px', color: '#888', textTransform: 'uppercase' }}>Rated 5 Stars on Google</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: 'clamp(64px, 12vw, 88px)', lineHeight: 1, color: '#f2f2f0' }}>5.0</span>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '6px' }}>
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <span key={i} style={{ color: GREEN, fontSize: '28px', lineHeight: 1 }}>★</span>
+                  ))}
+                </div>
+                <span style={{ fontSize: '15px', color: '#aaa' }}>Based on <strong style={{ color: '#f2f2f0' }}>27 Google reviews</strong></span>
               </div>
             </div>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '28px' }}>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              {testimonials.map((_, i) => (
-                <button key={i} className={`t-dot${i === active ? ' on' : ''}`} onClick={() => setActive(i)} aria-label={`Testimonial ${i + 1}`} />
-              ))}
-            </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button onClick={() => setActive(a => (a - 1 + testimonials.length) % testimonials.length)} style={{ width: '36px', height: '36px', background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#888', borderRadius: '50%', cursor: 'pointer', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
+            <p style={{ fontSize: '16px', color: '#999', lineHeight: 1.7, maxWidth: '480px', fontWeight: 300 }}>
+              Every review is from a real local customer across the Sunshine Coast — read them for yourself on our Google profile.
+            </p>
+            <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center', marginTop: '6px' }}>
+              <a href={REVIEW_URL} target="_blank" rel="noopener noreferrer" style={{
+                background: GREEN, color: '#0d0d0d', textDecoration: 'none', padding: '16px 40px', borderRadius: '6px',
+                fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '16px', letterSpacing: '1.5px', textTransform: 'uppercase', transition: 'all 0.2s',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#7fff1a'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = GREEN; e.currentTarget.style.transform = 'translateY(0)'; }}
+              >Read Our Google Reviews</a>
+              <a href={REVIEW_URL} target="_blank" rel="noopener noreferrer" style={{
+                background: 'transparent', color: '#f2f2f0', textDecoration: 'none', padding: '16px 32px', borderRadius: '6px', border: '1px solid #333',
+                fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '16px', letterSpacing: '1px', textTransform: 'uppercase', transition: 'all 0.2s',
+              }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = GREEN; e.currentTarget.style.color = GREEN; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#2a2a2a'; e.currentTarget.style.color = '#888'; }}
-              >←</button>
-              <button onClick={() => setActive(a => (a + 1) % testimonials.length)} style={{ width: '36px', height: '36px', background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#888', borderRadius: '50%', cursor: 'pointer', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = GREEN; e.currentTarget.style.color = GREEN; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#2a2a2a'; e.currentTarget.style.color = '#888'; }}
-              >→</button>
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#333'; e.currentTarget.style.color = '#f2f2f0'; }}
+              >Leave a Review</a>
             </div>
           </div>
-        </div>
+        </SR>
       </div>
     </section>
   );
@@ -738,7 +689,7 @@ function StatCard({ s, active }) {
 function About({ onQuote }) {
   const stats = [
     { val: '500+', label: 'Jobs Completed' },
-    { val: '5★', label: 'Average Rating' },
+    { val: '5.0★', label: '27 Google Reviews' },
     { val: 'Same Week', label: 'Turnaround' },
     { val: 'All Sizes', label: 'Properties Covered' },
   ];
